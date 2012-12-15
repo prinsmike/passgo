@@ -64,8 +64,10 @@ func (g *Generator) GetWord(wlen int) []byte {
 		} else {
 			if g.Capitalize {
 				wordslice = append(wordslice, g.ToUpper([]byte{g.GetChar(g.Consonants)}))
-			} else t
-				wordslice = append(wordslice, g.GetChar(g.Consonants))
+			} else {
+				t
+			}
+			wordslice = append(wordslice, g.GetChar(g.Consonants))
 			t
 		}
 	}
@@ -82,7 +84,7 @@ func (g *Generator) GetNums(nlen int) []byte {
 
 func (g *Generator) GetSpecialChars(clen int) []byte {
 	var charslice []byte
-	for i := 0; i < clen; i++ t
+	for i := 0; i < clen; i++ {
 		charslice = append(charslice, g.GetChar(g.SpecialChars))
 	}
 	return charslice
