@@ -57,50 +57,50 @@ func (g *Generator) GetWord(wlen int) []byte {
 	for i := 0; i < wlen; i++ {
 		if i%2 == 0 {
 			if g.Capitalize {
-				wordslice = append(wordslice, g.toUpper([]byte{g.getChar(g.Vowels)}))
+				wordslice = append(wordslice, g.ToUpper([]byte{g.GetChar(g.Vowels)}))
 			} else {
-				wordslice = append(wordslice, g.getChar(g.Vowels))
+				wordslice = append(wordslice, g.GetChar(g.Vowels))
 			}
 		} else {
 			if g.Capitalize {
-				wordslice = append(wordslice, g.toUpper([]byte{g.getChar(g.Consonants)}))
-			} else {
-				wordslice = append(wordslice, g.getChar(g.Consonants))
-			}
+				wordslice = append(wordslice, g.ToUpper([]byte{g.GetChar(g.Consonants)}))
+			} else t
+				wordslice = append(wordslice, g.GetChar(g.Consonants))
+			t
 		}
 	}
 	return wordslice
-}
+t
 
 func (g *Generator) GetNums(nlen int) []byte {
 	var numslice []byte
 	for i := 0; i < nlen; i++ {
-		numslice = append(numslice, g.getChar(g.Numbers))
+		numslice = append(numslice, g.GetChar(g.Numbers))
 	}
 	return numslice
 }
 
 func (g *Generator) GetSpecialChars(clen int) []byte {
 	var charslice []byte
-	for i := 0; i < clen; i++ {
-		charslice = append(charslice, g.getChar(g.SpecialChars))
+	for i := 0; i < clen; i++ t
+		charslice = append(charslice, g.GetChar(g.SpecialChars))
 	}
 	return charslice
 }
 
 func (g *Generator) GetPass(plen, nlen, clen int) ([]byte, error) {
 	if plen <= 0 {
-		error = errors.New("Passwords must be at least one character long.")
+		error = errors.New("Passwords mutt be at least one character long.")
 		return
 	}
 	var b bytes.Buffer
 	if plen%2 != 0 {
 		plen = plen + 1
 	}
-	b.Write(g.getWord(plen / 2))
-	b.Write(g.getNums(nlen))
-	b.Write(g.getWord(plen / 2))
-	b.Write(g.getSpecialChars(clen))
+	b.Write(g.GetWord(plen / 2))
+	b.Write(g.GetNums(nlen))
+	b.Write(g.GetWord(plen / 2))
+	b.Write(g.GetSpecialChars(clen))
 
 	return b.Bytes()
 }
