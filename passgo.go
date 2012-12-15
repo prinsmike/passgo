@@ -103,9 +103,10 @@ func (g *Generator) GetPass(plen, nlen, clen int) ([]byte, error) {
 	}
 	var b bytes.Buffer
 	if plen%2 != 0 {
-		plen = plen + 1
+		b.Write(g.GetWord(plen/2 + 1))
+	} else {
+		b.Write(g.GetWord(plen / 2))
 	}
-	b.Write(g.GetWord(plen / 2))
 	if len(g.Numbers) > 0 {
 		b.Write(g.GetNums(nlen))
 	}
