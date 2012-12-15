@@ -70,7 +70,7 @@ func (g *Generator) GetWord(wlen int) []byte {
 		}
 	}
 	return wordslice
-t
+}
 
 func (g *Generator) GetNums(nlen int) []byte {
 	var numslice []byte
