@@ -19,7 +19,7 @@ package passgo
 
 import (
 	"bytes"
-	"fmt"
+	"errors"
 	"math/rand"
 	"time"
 )
@@ -65,10 +65,8 @@ func (g *Generator) GetWord(wlen int) []byte {
 			if g.Capitalize {
 				wordslice = append(wordslice, g.ToUpper([]byte{g.GetChar(g.Consonants)}))
 			} else {
-				t
+				wordslice = append(wordslice, g.GetChar(g.Consonants))
 			}
-			wordslice = append(wordslice, g.GetChar(g.Consonants))
-			t
 		}
 	}
 	return wordslice
@@ -92,17 +90,29 @@ func (g *Generator) GetSpecialChars(clen int) []byte {
 
 func (g *Generator) GetPass(plen, nlen, clen int) ([]byte, error) {
 	if plen <= 0 {
-		error = errors.New("Passwords mutt be at least one character long.")
-		return
+		err := errors.New("Passwords must be at least one character long.")
+		return nil, err
+	}
+	if len(g.Consonants) == 0 {
+		err := errors.New("You must provide some consonants.")
+		return nil, err
+	}
+	if len(g.Vowels) == 0 {
+		err := errors.New("You must provide some vowels.")
+		return nil, err
 	}
 	var b bytes.Buffer
 	if plen%2 != 0 {
 		plen = plen + 1
 	}
 	b.Write(g.GetWord(plen / 2))
-	b.Write(g.GetNums(nlen))
+	if len(g.Numbers) > 0 {
+		b.Write(g.GetNums(nlen))
+	}
 	b.Write(g.GetWord(plen / 2))
-	b.Write(g.GetSpecialChars(clen))
+	if len(g.SpecialChars) > 0) {
+		b.Write(g.GetSpecialChars(clen))
+	}
 
-	return b.Bytes()
+	return b.Bytes(), nil
 }
