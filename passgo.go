@@ -110,7 +110,7 @@ func (g *Generator) GetPass(plen, nlen, clen int) ([]byte, error) {
 		b.Write(g.GetNums(nlen))
 	}
 	b.Write(g.GetWord(plen / 2))
-	if len(g.SpecialChars) > 0) {
+	if len(g.SpecialChars) > 0 {
 		b.Write(g.GetSpecialChars(clen))
 	}
 
