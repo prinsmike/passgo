@@ -82,7 +82,7 @@ func (g *Generator) WriteSpecialChars(sLen int) error {
 	return nil
 }
 
-func (g *Generator) NewPass(pLen, nLen, sLen int) (string, error) {
+func (g *Generator) NewPassword(pLen, nLen, sLen int) (string, error) {
 	if pLen <= 0 {
 		err := errors.New("Passwords must be at least one character long.")
 		return "", err
@@ -112,4 +112,15 @@ func (g *Generator) NewPass(pLen, nLen, sLen int) (string, error) {
 	}
 
 	return g.buffer.String(), nil
+}
+
+func NewGenerator(cons, vows, nums, specs []byte, caps bool, odds int) (g *Generator) {
+	g = new(Generator)
+	g.Consonants = cons
+	g.Vowels = vows
+	g.Numbers = nums
+	g.SpecialChars = specs
+	g.Capitalize = caps
+	g.CapitalizeOdds = odds
+	return
 }
