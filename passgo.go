@@ -60,9 +60,9 @@ func (g *Generator) ToUpper(char []byte) byte {
 func (g *Generator) WriteWord(wlen int) error {
 	for i := 0; i < wlen; i++ {
 		if i%2 == 0 {
-			g.WriteChar(g.Vowels)
-		} else {
 			g.WriteChar(g.Consonants)
+		} else {
+			g.WriteChar(g.Vowels)
 		}
 	}
 	return nil
