@@ -82,7 +82,7 @@ func (g *Generator) WriteSpecialChars(sLen int) error {
 	return nil
 }
 
-func (g *Generator) WritePass(pLen, nLen, sLen int) (string, error) {
+func (g *Generator) NewPass(pLen, nLen, sLen int) (string, error) {
 	if pLen <= 0 {
 		err := errors.New("Passwords must be at least one character long.")
 		return "", err
