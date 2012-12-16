@@ -31,17 +31,16 @@ type Generator struct {
 	SpecialChars   []byte
 	Capitalize     bool
 	CapitalizeOdds int
-	Password       string
-	Buffer         bytes.Buffer
+	buffer         bytes.Buffer
 }
 
 func (g *Generator) WriteChar(slice []byte) error {
 	rand.Seed(time.Now().UTC().UnixNano())
 	n := rand.Intn(len(slice))
 	if g.Capitalize {
-		g.Buffer.WriteByte(g.ToUpper([]byte{slice[n]}))
+		g.buffer.WriteByte(g.ToUpper([]byte{slice[n]}))
 	} else {
-		g.Buffer.WriteByte(slice[n])
+		g.buffer.WriteByte(slice[n])
 	}
 	return nil
 }
@@ -83,18 +82,18 @@ func (g *Generator) WriteSpecialChars(sLen int) error {
 	return nil
 }
 
-func (g *Generator) WritePass(pLen, nLen, sLen int) error {
+func (g *Generator) WritePass(pLen, nLen, sLen int) (string, error) {
 	if pLen <= 0 {
 		err := errors.New("Passwords must be at least one character long.")
-		return err
+		return "", err
 	}
 	if len(g.Consonants) == 0 {
 		err := errors.New("You must provide some consonants.")
-		return err
+		return "", err
 	}
 	if len(g.Vowels) == 0 {
 		err := errors.New("You must provide some vowels.")
-		return err
+		return "", err
 	}
 
 	pLen = pLen - (nLen + sLen)
@@ -112,7 +111,5 @@ func (g *Generator) WritePass(pLen, nLen, sLen int) error {
 		g.WriteSpecialChars(sLen)
 	}
 
-	g.Password = g.Buffer.String()
-
-	return nil
+	return g.buffer.String(), nil
 }
