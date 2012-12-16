@@ -25,19 +25,25 @@ import (
 )
 
 type Generator struct {
-	Vowels         []byte
 	Consonants     []byte
+	Vowels         []byte
 	Numbers        []byte
 	SpecialChars   []byte
 	Capitalize     bool
 	CapitalizeOdds int
+	Password       string
+	Buffer         bytes.Buffer
 }
 
-func (g *Generator) GetChar(slice []byte) byte {
+func (g *Generator) WriteChar(slice []byte) error {
 	rand.Seed(time.Now().UTC().UnixNano())
 	n := rand.Intn(len(slice))
-
-	return slice[n]
+	if g.Capitalize {
+		g.Buffer.WriteByte(g.ToUpper([]byte{slice[n]}))
+	} else {
+		g.Buffer.WriteByte(slice[n])
+	}
+	return nil
 }
 
 func (g *Generator) ToUpper(char []byte) byte {
@@ -52,68 +58,61 @@ func (g *Generator) ToUpper(char []byte) byte {
 	return b
 }
 
-func (g *Generator) GetWord(wlen int) []byte {
-	var wordslice []byte
+func (g *Generator) WriteWord(wlen int) error {
 	for i := 0; i < wlen; i++ {
 		if i%2 == 0 {
-			if g.Capitalize {
-				wordslice = append(wordslice, g.ToUpper([]byte{g.GetChar(g.Vowels)}))
-			} else {
-				wordslice = append(wordslice, g.GetChar(g.Vowels))
-			}
+			g.WriteChar(g.Vowels)
 		} else {
-			if g.Capitalize {
-				wordslice = append(wordslice, g.ToUpper([]byte{g.GetChar(g.Consonants)}))
-			} else {
-				wordslice = append(wordslice, g.GetChar(g.Consonants))
-			}
+			g.WriteChar(g.Consonants)
 		}
 	}
-	return wordslice
+	return nil
 }
 
-func (g *Generator) GetNums(nlen int) []byte {
-	var numslice []byte
-	for i := 0; i < nlen; i++ {
-		numslice = append(numslice, g.GetChar(g.Numbers))
+func (g *Generator) WriteNums(nLen int) error {
+	for i := 0; i < nLen; i++ {
+		g.WriteChar(g.Numbers)
 	}
-	return numslice
+	return nil
 }
 
-func (g *Generator) GetSpecialChars(clen int) []byte {
-	var charslice []byte
-	for i := 0; i < clen; i++ {
-		charslice = append(charslice, g.GetChar(g.SpecialChars))
+func (g *Generator) WriteSpecialChars(sLen int) error {
+	for i := 0; i < sLen; i++ {
+		g.WriteChar(g.SpecialChars)
 	}
-	return charslice
+	return nil
 }
 
-func (g *Generator) GetPass(plen, nlen, clen int) ([]byte, error) {
-	if plen <= 0 {
+func (g *Generator) WritePass(pLen, nLen, sLen int) error {
+	if pLen <= 0 {
 		err := errors.New("Passwords must be at least one character long.")
-		return nil, err
+		return err
 	}
 	if len(g.Consonants) == 0 {
 		err := errors.New("You must provide some consonants.")
-		return nil, err
+		return err
 	}
 	if len(g.Vowels) == 0 {
 		err := errors.New("You must provide some vowels.")
-		return nil, err
-	}
-	var b bytes.Buffer
-	if plen%2 != 0 {
-		b.Write(g.GetWord(plen/2 + 1))
-	} else {
-		b.Write(g.GetWord(plen / 2))
-	}
-	if len(g.Numbers) > 0 {
-		b.Write(g.GetNums(nlen))
-	}
-	b.Write(g.GetWord(plen / 2))
-	if len(g.SpecialChars) > 0 {
-		b.Write(g.GetSpecialChars(clen))
+		return err
 	}
 
-	return b.Bytes(), nil
+	pLen = pLen - (nLen + sLen)
+
+	if pLen%2 != 0 {
+		g.WriteWord(pLen/2 + 1)
+	} else {
+		g.WriteWord(pLen / 2)
+	}
+	if len(g.Numbers) > 0 {
+		g.WriteNums(nLen)
+	}
+	g.WriteWord(pLen / 2)
+	if len(g.SpecialChars) > 0 {
+		g.WriteSpecialChars(sLen)
+	}
+
+	g.Password = g.Buffer.String()
+
+	return nil
 }
