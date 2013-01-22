@@ -111,7 +111,10 @@ func (g *Generator) NewPassword(pLen, nLen, sLen int) (string, error) {
 		g.WriteSpecialChars(sLen)
 	}
 
-	return g.buffer.String(), nil
+	s := g.buffer.String()
+	g.buffer.Reset()
+
+	return s, nil
 }
 
 func NewGenerator(cons, vows, nums, specs []byte, caps bool, odds int) (g *Generator) {
