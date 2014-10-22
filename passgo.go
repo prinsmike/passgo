@@ -89,36 +89,49 @@ func (g *Generator) WriteSpecialChars(sLen int) error {
 	return nil
 }
 
-func (g *Generator) NewPassword(pLen, nLen, sLen int) (string, error) {
+func (g *Generator) NewPassword(pLen, nLen, sLen int) (s string, err error) {
 	if pLen <= 0 {
-		return "", errors.New("Passwords must be at least one character long.")
+		err = errors.New("passgo: you must provide some consonants.")
+		return
 	}
 	if len(g.Consonants) == 0 {
-		return "", errors.New("You must provide some consonants.")
+		err = errors.New("passgo: you must provide some consonants.")
+		return
 	}
 	if len(g.Vowels) == 0 {
-		return "", errors.New("You must provide some vowels.")
+		err = errors.New("passgo: you must provide some vowels.")
+		return
 	}
 
 	pLen = pLen - (nLen + sLen)
 
 	if pLen%2 != 0 {
-		g.WriteWord(pLen/2 + 1)
+		if err = g.WriteWord(pLen/2 + 1); err != nil {
+			return
+		}
 	} else {
-		g.WriteWord(pLen / 2)
+		if err = g.WriteWord(pLen / 2); err != nil {
+			return
+		}
 	}
 	if len(g.Numbers) > 0 {
-		g.WriteNums(nLen)
+		if err = g.WriteNums(nLen); err != nil {
+			return
+		}
 	}
-	g.WriteWord(pLen / 2)
+	if err = g.WriteWord(pLen / 2); err != nil {
+		return
+	}
 	if len(g.SpecialChars) > 0 {
-		g.WriteSpecialChars(sLen)
+		if err = g.WriteSpecialChars(sLen); err != nil {
+			return
+		}
 	}
 
-	s := g.buffer.String()
+	s = g.buffer.String()
 	g.buffer.Reset()
 
-	return s, nil
+	return
 }
 
 func NewGenerator(cons, vows, nums, specs []byte, caps bool, odds int) (g *Generator) {
