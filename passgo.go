@@ -38,11 +38,10 @@ func (g *Generator) WriteChar(slice []byte) error {
 	rand.Seed(time.Now().UTC().UnixNano())
 	n := rand.Intn(len(slice))
 	if g.Capitalize {
-		g.buffer.WriteByte(g.ToUpper([]byte{slice[n]}))
+		return g.buffer.WriteByte(g.ToUpper([]byte{slice[n]}))
 	} else {
-		g.buffer.WriteByte(slice[n])
+		return g.buffer.WriteByte(slice[n])
 	}
-	return nil
 }
 
 func (g *Generator) ToUpper(char []byte) byte {
@@ -57,12 +56,16 @@ func (g *Generator) ToUpper(char []byte) byte {
 	return b
 }
 
-func (g *Generator) WriteWord(wlen int) error {
-	for i := 0; i < wlen; i++ {
+func (g *Generator) WriteWord(wLen int) error {
+	for i := 0; i < wLen; i++ {
 		if i%2 == 0 {
-			g.WriteChar(g.Consonants)
+			if err := g.WriteChar(g.Consonants); err != nil {
+				return err
+			}
 		} else {
-			g.WriteChar(g.Vowels)
+			if err := g.WriteChar(g.Vowels); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -70,51 +73,65 @@ func (g *Generator) WriteWord(wlen int) error {
 
 func (g *Generator) WriteNums(nLen int) error {
 	for i := 0; i < nLen; i++ {
-		g.WriteChar(g.Numbers)
+		if err := g.WriteChar(g.Numbers); err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
 func (g *Generator) WriteSpecialChars(sLen int) error {
 	for i := 0; i < sLen; i++ {
-		g.WriteChar(g.SpecialChars)
+		if err := g.WriteChar(g.SpecialChars); err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
-func (g *Generator) NewPassword(pLen, nLen, sLen int) (string, error) {
+func (g *Generator) NewPassword(pLen, nLen, sLen int) (s string, err error) {
 	if pLen <= 0 {
-		err := errors.New("Passwords must be at least one character long.")
-		return "", err
+		err = errors.New("passgo: passwords must be at least one character long")
+		return
 	}
 	if len(g.Consonants) == 0 {
-		err := errors.New("You must provide some consonants.")
-		return "", err
+		err = errors.New("passgo: you must provide some consonants.")
+		return
 	}
 	if len(g.Vowels) == 0 {
-		err := errors.New("You must provide some vowels.")
-		return "", err
+		err = errors.New("passgo: you must provide some vowels.")
+		return
 	}
 
 	pLen = pLen - (nLen + sLen)
 
 	if pLen%2 != 0 {
-		g.WriteWord(pLen/2 + 1)
+		if err = g.WriteWord(pLen/2 + 1); err != nil {
+			return
+		}
 	} else {
-		g.WriteWord(pLen / 2)
+		if err = g.WriteWord(pLen / 2); err != nil {
+			return
+		}
 	}
 	if len(g.Numbers) > 0 {
-		g.WriteNums(nLen)
+		if err = g.WriteNums(nLen); err != nil {
+			return
+		}
 	}
-	g.WriteWord(pLen / 2)
+	if err = g.WriteWord(pLen / 2); err != nil {
+		return
+	}
 	if len(g.SpecialChars) > 0 {
-		g.WriteSpecialChars(sLen)
+		if err = g.WriteSpecialChars(sLen); err != nil {
+			return
+		}
 	}
 
-	s := g.buffer.String()
+	s = g.buffer.String()
 	g.buffer.Reset()
 
-	return s, nil
+	return
 }
 
 func NewGenerator(cons, vows, nums, specs []byte, caps bool, odds int) (g *Generator) {
@@ -123,6 +140,17 @@ func NewGenerator(cons, vows, nums, specs []byte, caps bool, odds int) (g *Gener
 	g.Vowels = vows
 	g.Numbers = nums
 	g.SpecialChars = specs
+	g.Capitalize = caps
+	g.CapitalizeOdds = odds
+	return
+}
+
+func NewDefaultGenerator(caps bool, odds int) (g *Generator) {
+	g = new(Generator)
+	g.Consonants = []byte("bcdfghjklmnpqrstvwxyz")
+	g.Vowels = []byte("aeiou")
+	g.Numbers = []byte("0123456789")
+	g.SpecialChars = []byte("!@$#%&*-_.")
 	g.Capitalize = caps
 	g.CapitalizeOdds = odds
 	return
