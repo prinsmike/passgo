@@ -91,7 +91,7 @@ func (g *Generator) WriteSpecialChars(sLen int) error {
 
 func (g *Generator) NewPassword(pLen, nLen, sLen int) (s string, err error) {
 	if pLen <= 0 {
-		err = errors.New("passgo: you must provide some consonants.")
+		err = errors.New("passgo: passwords must be at least one character long")
 		return
 	}
 	if len(g.Consonants) == 0 {
