@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-07-22
+
+### Added
+- `CHANGELOG.md`; the release workflow now publishes the matching version's
+  changelog section as the GitHub release notes.
+- A `verify-changelog` CI job that fails a `v*` tag build when `CHANGELOG.md`
+  has no entry for the tag, so releases can't ship auto-generated notes by
+  mistake.
+
 ## [2.0.1] - 2026-07-22
 
 ### Added
@@ -54,7 +63,8 @@ redesigned and the module path is now `github.com/prinsmike/passgo/v2`.
 - This version uses `math/rand` and is **not** cryptographically secure. Use
   v2 or later for any real-world password generation.
 
-[Unreleased]: https://github.com/prinsmike/passgo/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/prinsmike/passgo/compare/v2.0.2...HEAD
+[2.0.2]: https://github.com/prinsmike/passgo/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/prinsmike/passgo/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/prinsmike/passgo/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/prinsmike/passgo/releases/tag/v1.0.0
