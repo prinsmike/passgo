@@ -22,7 +22,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/prinsmike/passgo"
+	"github.com/prinsmike/passgo/v2"
 )
 
 func main() {

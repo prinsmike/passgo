@@ -2,7 +2,7 @@ passgo
 ======
 
 [![CI](https://github.com/prinsmike/passgo/actions/workflows/ci.yml/badge.svg)](https://github.com/prinsmike/passgo/actions/workflows/ci.yml)
-[![Go Reference](https://pkg.go.dev/badge/github.com/prinsmike/passgo.svg)](https://pkg.go.dev/github.com/prinsmike/passgo)
+[![Go Reference](https://pkg.go.dev/badge/github.com/prinsmike/passgo/v2.svg)](https://pkg.go.dev/github.com/prinsmike/passgo/v2)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 
 A human-readable ("pronounceable") password generator for Go. It builds
@@ -19,13 +19,13 @@ is safe for concurrent use.
 Library:
 
 ```sh
-go get github.com/prinsmike/passgo
+go get github.com/prinsmike/passgo/v2
 ```
 
 Command-line tool:
 
 ```sh
-go install github.com/prinsmike/passgo/cmd/passgo@latest
+go install github.com/prinsmike/passgo/v2/cmd/passgo@latest
 ```
 
 ## Library usage
@@ -37,7 +37,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/prinsmike/passgo"
+	"github.com/prinsmike/passgo/v2"
 )
 
 func main() {
