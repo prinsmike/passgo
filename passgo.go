@@ -216,7 +216,7 @@ func (g *Generator) maybeUpper(c byte) (byte, error) {
 		return c, err
 	}
 	if roll == 0 {
-		return byte(strings.ToUpper(string(c))[0]), nil
+		return strings.ToUpper(string(c))[0], nil
 	}
 	return c, nil
 }

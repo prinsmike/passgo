@@ -5,9 +5,11 @@ import (
 	"testing"
 )
 
+const lengthFlag = "-length"
+
 func TestRunGeneratesCount(t *testing.T) {
 	var out strings.Builder
-	if err := run([]string{"-count", "5", "-length", "10"}, &out); err != nil {
+	if err := run([]string{"-count", "5", lengthFlag, "10"}, &out); err != nil {
 		t.Fatalf("run: %v", err)
 	}
 	lines := strings.Split(strings.TrimSpace(out.String()), "\n")
@@ -30,14 +32,14 @@ func TestRunInvalidCount(t *testing.T) {
 
 func TestRunInvalidComposition(t *testing.T) {
 	var out strings.Builder
-	if err := run([]string{"-length", "4", "-numbers", "3", "-specials", "3"}, &out); err == nil {
+	if err := run([]string{lengthFlag, "4", "-numbers", "3", "-specials", "3"}, &out); err == nil {
 		t.Error("expected error when numbers+specials exceeds length, got nil")
 	}
 }
 
 func TestRunNoCapitalization(t *testing.T) {
 	var out strings.Builder
-	if err := run([]string{"-odds", "0", "-length", "20", "-numbers", "0", "-specials", "0"}, &out); err != nil {
+	if err := run([]string{"-odds", "0", lengthFlag, "20", "-numbers", "0", "-specials", "0"}, &out); err != nil {
 		t.Fatalf("run: %v", err)
 	}
 	pw := strings.TrimSpace(out.String())

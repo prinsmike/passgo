@@ -1,0 +1,56 @@
+version: "2"
+
+linters:
+  # Start from the standard set (errcheck, govet, ineffassign, staticcheck,
+  # unused) and layer stricter linters on top.
+  default: standard
+  enable:
+    - asasalint      # slices passed to variadic ...any
+    - bidichk        # dangerous unicode bidi sequences
+    - bodyclose      # unclosed HTTP response bodies
+    - copyloopvar    # loop-variable copy mistakes
+    - durationcheck  # suspicious time.Duration multiplications
+    - errorlint      # correct error wrapping / comparison
+    - gocritic       # opinionated correctness & style checks
+    - gocyclo        # cyclomatic complexity
+    - goconst        # repeated strings that should be constants
+    - godot          # comments end in a period
+    - gosec          # security problems (crypto, etc.)
+    - misspell       # common English misspellings
+    - nakedret       # naked returns in longer functions
+    - nilerr         # returning nil after a non-nil error check
+    - nolintlint     # well-formed, justified //nolint directives
+    - prealloc       # slices that could be preallocated
+    - predeclared    # shadowing predeclared identifiers
+    - reassign       # reassignment of package variables
+    - revive         # broad golint-style style/correctness rules
+    - unconvert      # unnecessary type conversions
+    - unparam        # unused function parameters
+    - usestdlibvars  # use stdlib constants instead of literals
+    - wastedassign   # assignments never used
+    - whitespace     # leading/trailing whitespace
+
+  settings:
+    gocyclo:
+      min-complexity: 15
+    govet:
+      enable-all: true
+    revive:
+      rules:
+        - name: exported
+        - name: unexported-return
+        - name: error-return
+        - name: error-strings
+        - name: error-naming
+        - name: if-return
+        - name: var-declaration
+        - name: blank-imports
+        - name: context-as-argument
+        - name: indent-error-flow
+        - name: superfluous-else
+        - name: unreachable-code
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
