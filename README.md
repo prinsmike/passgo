@@ -3,7 +3,6 @@ passgo
 
 [![CI](https://github.com/prinsmike/passgo/actions/workflows/ci.yml/badge.svg)](https://github.com/prinsmike/passgo/actions/workflows/ci.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/prinsmike/passgo.svg)](https://pkg.go.dev/github.com/prinsmike/passgo)
-[![Go Report Card](https://goreportcard.com/badge/github.com/prinsmike/passgo)](https://goreportcard.com/report/github.com/prinsmike/passgo)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 
 A human-readable ("pronounceable") password generator for Go. It builds
