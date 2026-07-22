@@ -47,9 +47,9 @@ func run(args []string, out io.Writer) error {
 	specialchars := fs.String("specialchars", string(passgo.DefaultSpecialChars), "special character set")
 
 	fs.Usage = func() {
-		fmt.Fprintln(out, "Usage: passgo [flags]")
-		fmt.Fprintln(out, "\nGenerate human-readable (pronounceable) passwords.")
-		fmt.Fprintln(out, "\nFlags:")
+		// Usage output is diagnostic; a write error here is not actionable.
+		_, _ = io.WriteString(out, "Usage: passgo [flags]\n\n"+
+			"Generate human-readable (pronounceable) passwords.\n\nFlags:\n")
 		fs.PrintDefaults()
 	}
 
@@ -73,7 +73,9 @@ func run(args []string, out io.Writer) error {
 		if err != nil {
 			return err
 		}
-		fmt.Fprintln(out, pw)
+		if _, err := fmt.Fprintln(out, pw); err != nil {
+			return err
+		}
 	}
 	return nil
 }
