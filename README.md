@@ -16,6 +16,39 @@ is safe for concurrent use.
 
 ## Install
 
+### Download a prebuilt binary
+
+Prebuilt binaries for each [release](https://github.com/prinsmike/passgo/releases)
+are attached as archives — no Go toolchain required. Grab the one for your
+platform:
+
+| OS      | Architecture | Asset                                  |
+| ------- | ------------ | -------------------------------------- |
+| Linux   | x86-64       | `passgo_<version>_linux_amd64.tar.gz`  |
+| Linux   | ARM64        | `passgo_<version>_linux_arm64.tar.gz`  |
+| macOS   | Intel        | `passgo_<version>_darwin_amd64.tar.gz` |
+| macOS   | Apple silicon| `passgo_<version>_darwin_arm64.tar.gz` |
+| Windows | x86-64       | `passgo_<version>_windows_amd64.zip`   |
+
+For example, on Linux (x86-64):
+
+```sh
+VERSION=v2.0.0
+curl -L -o passgo.tar.gz \
+  "https://github.com/prinsmike/passgo/releases/download/${VERSION}/passgo_${VERSION}_linux_amd64.tar.gz"
+tar -xzf passgo.tar.gz
+sudo install passgo /usr/local/bin/
+```
+
+Each release also ships a `SHA256SUMS.txt`. To verify your download:
+
+```sh
+curl -LO "https://github.com/prinsmike/passgo/releases/download/${VERSION}/SHA256SUMS.txt"
+sha256sum -c SHA256SUMS.txt --ignore-missing
+```
+
+### Install with the Go toolchain
+
 Library:
 
 ```sh
