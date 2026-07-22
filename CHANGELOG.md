@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.3] - 2026-07-22
+
 ### Added
 - README badges for the latest release and the module's Go version.
 
@@ -66,7 +68,8 @@ redesigned and the module path is now `github.com/prinsmike/passgo/v2`.
 - This version uses `math/rand` and is **not** cryptographically secure. Use
   v2 or later for any real-world password generation.
 
-[Unreleased]: https://github.com/prinsmike/passgo/compare/v2.0.2...HEAD
+[Unreleased]: https://github.com/prinsmike/passgo/compare/v2.0.3...HEAD
+[2.0.3]: https://github.com/prinsmike/passgo/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/prinsmike/passgo/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/prinsmike/passgo/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/prinsmike/passgo/compare/v1.0.0...v2.0.0
