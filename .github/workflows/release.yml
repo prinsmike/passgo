@@ -1,0 +1,56 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release-binaries:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - name: Build release archives
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          platforms="linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64"
+          for platform in $platforms; do
+            GOOS=${platform%/*}
+            GOARCH=${platform#*/}
+            bin=passgo
+            [ "$GOOS" = windows ] && bin=passgo.exe
+            echo "Building ${GOOS}/${GOARCH}"
+            CGO_ENABLED=0 GOOS="$GOOS" GOARCH="$GOARCH" \
+              go build -trimpath -ldflags="-s -w" -o "dist/$bin" ./cmd/passgo
+            archive="passgo_${VERSION}_${GOOS}_${GOARCH}"
+            if [ "$GOOS" = windows ]; then
+              (cd dist && zip -q "${archive}.zip" "$bin" && rm "$bin")
+            else
+              (cd dist && tar -czf "${archive}.tar.gz" "$bin" && rm "$bin")
+            fi
+          done
+          (cd dist && sha256sum * > SHA256SUMS.txt)
+          ls -la dist
+
+      - name: Publish archives to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          # Create the release if a tag was pushed without one; otherwise reuse it.
+          gh release view "$VERSION" >/dev/null 2>&1 \
+            || gh release create "$VERSION" --title "$VERSION" --generate-notes
+          gh release upload "$VERSION" dist/* --clobber
