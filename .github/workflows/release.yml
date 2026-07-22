@@ -44,13 +44,46 @@ jobs:
           (cd dist && sha256sum * > SHA256SUMS.txt)
           ls -la dist
 
+      - name: Extract release notes from CHANGELOG
+        id: notes
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          num=${VERSION#v}
+          file="$(mktemp)"
+          # Print the body of the "## [<version>]" section, stopping at the next section.
+          awk -v ver="$num" '
+            $0 ~ "^## \\[" ver "\\]"     { flag=1; next }
+            flag && /^## \[/             { exit }
+            flag && /^\[[^][]+\]:[ \t]/  { exit }
+            flag                        { print }
+          ' CHANGELOG.md | sed -e '/./,$!d' -e ':a' -e '/^\n*$/{$d;N;ba}' > "$file"
+          if [ -s "$file" ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "file=$file" >> "$GITHUB_OUTPUT"
+
       - name: Publish archives to the release
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ github.ref_name }}
+          NOTES_FOUND: ${{ steps.notes.outputs.found }}
+          NOTES_FILE: ${{ steps.notes.outputs.file }}
         run: |
           set -euo pipefail
-          # Create the release if a tag was pushed without one; otherwise reuse it.
-          gh release view "$VERSION" >/dev/null 2>&1 \
-            || gh release create "$VERSION" --title "$VERSION" --generate-notes
+          if [ "$NOTES_FOUND" = true ]; then
+            note_args=(--notes-file "$NOTES_FILE")
+          else
+            echo "::warning::No CHANGELOG entry for $VERSION; using generated notes."
+            note_args=(--generate-notes)
+          fi
+          if gh release view "$VERSION" >/dev/null 2>&1; then
+            # Release already exists: refresh notes only when the changelog has them.
+            [ "$NOTES_FOUND" = true ] && gh release edit "$VERSION" --notes-file "$NOTES_FILE"
+          else
+            gh release create "$VERSION" --title "$VERSION" "${note_args[@]}"
+          fi
           gh release upload "$VERSION" dist/* --clobber
