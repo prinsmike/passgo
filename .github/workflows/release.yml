@@ -9,7 +9,32 @@ permissions:
   contents: write
 
 jobs:
+  verify-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Require a CHANGELOG entry for the tag
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          num=${VERSION#v}
+          # Same extraction the release step uses: the section must be non-empty.
+          notes="$(awk -v ver="$num" '
+            $0 ~ "^## \\[" ver "\\]"     { flag=1; next }
+            flag && /^## \[/             { exit }
+            flag && /^\[[^][]+\]:[ \t]/  { exit }
+            flag                        { print }
+          ' CHANGELOG.md | sed -e '/./,$!d')"
+          if [ -z "$notes" ]; then
+            echo "::error::No CHANGELOG.md entry '## [${num}]' for tag ${VERSION}. Add one before tagging."
+            exit 1
+          fi
+          echo "Found CHANGELOG entry for ${num}."
+
   release-binaries:
+    needs: verify-changelog
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
